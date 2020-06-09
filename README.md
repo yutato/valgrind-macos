@@ -97,6 +97,12 @@ memcheck/tests/linux/sys-preadv2_pwritev2 (stderr)
 OUTDATED
 ```
 
+Blocking:
+bug254164
+addressable
+pth_term_signal
+syscall_restart2
+
 ### macOS (10.15.1)
 
 ```
