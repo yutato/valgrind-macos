@@ -1,0 +1,86 @@
+
+How to cross-compile and run on Darwin (Mac OS X/macOS/iOS).
+
+These instructions are known to work, or have worked at some time in
+the past, for:
+
+arm:
+  iOS 4-10 (unsupported)
+
+x86:
+  Mac OS X 10.6-11
+  macOS 10.12-14
+
+x86_64:
+  Mac OS X 10.6-11 (probably?)
+  macOS 10.12-15
+
+arm64:
+  macOS 11 (untested)
+  iOS 6-13 (untested)
+
+Run the following commands:
+
+# Modify this.  One build of Valgrind only works for a specific version of the Darwin platform.
+# Example for Mac OS X/macOS 10.15:
+# export DARWIN_VERSION=10.15
+# Example for iOS 13.2:
+# export DARWIN_VERSION=13.2
+export DARWIN_VERSION=target_version
+
+
+# Then cd to the root of your Valgrind source tree.
+#
+cd /path/to/valgrind/source/tree
+
+
+# After this point, you don't need to modify anything.  Just copy and
+# paste the commands below.
+
+
+# Do configuration stuff.
+
+# The below re-generates configure, Makefiles, ...
+# This is not needed if you start from a release tarball.
+./autogen.sh
+
+# for iOS (ARM) -> unsupported
+# CPPFLAGS="-arch armv7 -isysroot $(xcrun --sdk iphoneos$DARWIN_VERSION --show-sdk-path)" \
+# CFLAGS="-arch armv7 -isysroot $(xcrun --sdk iphoneos$DARWIN_VERSION --show-sdk-path)" \
+# ./configure --with-darwin-version=$DARWIN_VERSION \
+#   --with-darwin-platform=iphoneos \
+#   --host=armv7-unknown-darwin
+
+# for iOS (ARM64)
+CPPFLAGS="-arch arm64 -isysroot $(xcrun --sdk iphoneos$DARWIN_VERSION --show-sdk-path)" \
+CFLAGS="-arch arm64 -isysroot $(xcrun --sdk iphoneos$DARWIN_VERSION --show-sdk-path)" \
+./configure --with-darwin-version=$DARWIN_VERSION \
+  --with-darwin-platform=iphoneos \
+  --host=aarch64-unknown-darwin
+
+# for macOS (x86)
+CPPFLAGS="-arch i686 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+CFLAGS="-arch i686 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+./configure --with-darwin-version=$DARWIN_VERSION \
+  --with-darwin-platform=macosx \
+  --host=i686-unknown-darwin
+
+# for macOS (x86_64)
+CPPFLAGS="-arch amd64 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+CFLAGS="-arch amd64 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+./configure --with-darwin-version=$DARWIN_VERSION \
+  --with-darwin-platform=macosx \
+  --host=amd64-unknown-darwin
+
+# for macOS (ARM64)
+CPPFLAGS="-arch aarch64 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+CFLAGS="-arch aarch64 -isysroot $(xcrun --sdk macosx$DARWIN_VERSION --show-sdk-path)" \
+./configure --with-darwin-version=$DARWIN_VERSION \
+  --with-darwin-platform=macosx \
+  --host=aarch64-unknown-darwin
+
+
+# Build, and park the install tree in `pwd`/result
+#
+make -j4
+make -j4 install DESTDIR=`pwd`/result
